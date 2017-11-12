@@ -14,13 +14,11 @@ from collections import OrderedDict
 from sseclient import SSEClient
 import threading
 import socket
-from oauth2client.service_account import ServiceAccountCredentials
 from gcloud import storage
 from requests.packages.urllib3.contrib.appengine import is_appengine_sandbox
 from requests_toolbelt.adapters import appengine
 
 import python_jwt as jwt
-from Crypto.PublicKey import RSA
 import datetime
 
 
@@ -38,6 +36,7 @@ class Firebase:
         self.credentials = None
         self.requests = requests.Session()
         if config.get("serviceAccount"):
+            from oauth2client.service_account import ServiceAccountCredentials
             scopes = [
                 'https://www.googleapis.com/auth/firebase.database',
                 'https://www.googleapis.com/auth/userinfo.email',
@@ -87,6 +86,7 @@ class Auth:
         return request_object.json()
 
     def create_custom_token(self, uid, additional_claims=None):
+        from Crypto.PublicKey import RSA
         service_account_email = self.credentials.service_account_email
         private_key = RSA.importKey(self.credentials._private_key_pkcs8_pem)
         payload = {
